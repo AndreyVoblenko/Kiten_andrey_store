@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Продажа котят</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        .contact {
+            background-color: #ffcc00;
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        .kitten-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .kitten-card:hover {
+            transform: translateY(-5px);
+        }
+        .kitten-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 2px solid #eee;
+        }
+        .description {
+            padding: 15px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="contact">
+        WhatsApp/Telegram Номер: +7 926 229 24-39
+    </div>
+    
+    <div class="gallery" id="gallery"></div>
+
+    <script>
+        async function loadGallery() {
+            try {
+                // Загрузка описаний
+                const response = await fetch('info_cat.txt');
+                const text = await response.text();
+                
+                // Парсинг описаний
+                const descriptions = {};
+                const blocks = text.split('photo ');
+                blocks.forEach(block => {
+                    const match = block.match(/^(\d+):\s*\*\s*([^*]+)\s*\*/);
+                    if (match && match[1] && match[2]) {
+                        descriptions[match[1]] = match[2].trim();
+                    }
+                });
+                
+                // Генерация галереи
+                const gallery = document.getElementById('gallery');
+                for (let i = 1; i <= 35; i++) {
+                    const card = document.createElement('div');
+                    card.className = 'kitten-card';
+                    
+                    // Изображение
+                    const img = document.createElement('img');
+                    img.src = `images/photo${i}.jpg`;
+                    img.alt = `Котёнок ${i}`;
+                    img.onerror = function() {
+                        this.src = 'https://placekitten.com/250/200?image=' + i;
+                    };
+                    
+                    // Описание
+                    const desc = document.createElement('div');
+                    desc.className = 'description';
+                    desc.textContent = descriptions[i] || 'Описание отсутствует';
+                    
+                    card.appendChild(img);
+                    card.appendChild(desc);
+                    gallery.appendChild(card);
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                document.getElementById('gallery').innerHTML = 
+                    '<p>Произошла ошибка при загрузке данных. Пожалуйста, обновите страницу.</p>';
+            }
+        }
+        
+        // Запуск после загрузки страницы
+        window.addEventListener('DOMContentLoaded', loadGallery);
+    </script>
+</body>
+</html>
