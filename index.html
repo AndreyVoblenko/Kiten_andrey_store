@@ -5,104 +5,304 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Продажа котят</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f9f9f9;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
-        .contact {
-            background-color: #ffcc00;
-            padding: 15px;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 25px;
             text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-            border-radius: 5px;
+            border-radius: 15px;
             margin-bottom: 30px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+        h1 {
+            margin-bottom: 15px;
+            font-size: 2.5rem;
+        }
+        .contact-info {
+            background-color: rgba(255, 255, 255, 0.2);
+            display: inline-block;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-top: 10px;
+            backdrop-filter: blur(5px);
+            border: 2px solid white;
         }
         .gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
         }
         .kitten-card {
             background: white;
-            border-radius: 10px;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
         .kitten-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+        }
+        .image-container {
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .kitten-card img {
             width: 100%;
-            height: 200px;
+            height: 100%;
             object-fit: cover;
-            border-bottom: 2px solid #eee;
+            transition: transform 0.5s;
+        }
+        .kitten-card:hover img {
+            transform: scale(1.05);
         }
         .description {
-            padding: 15px;
-            font-size: 14px;
-            line-height: 1.5;
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .photo-id {
+            background-color: #4e54c8;
+            color: white;
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            align-self: flex-start;
+        }
+        .kitten-desc {
+            margin-top: 10px;
+            font-size: 1rem;
+            color: #444;
+            flex-grow: 1;
+        }
+        .error-placeholder {
+            color: #777;
+            font-style: italic;
+            text-align: center;
+            padding: 30px;
+            background: #f9f9f9;
+            border: 2px dashed #eee;
+            border-radius: 10px;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: #4e54c8;
+        }
+        .debug-info {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 0 8px 8px 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            display: none;
+        }
+        .debug-toggle {
+            background: #ffc107;
+            color: #333;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 20px;
+            display: inline-block;
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+        }
+        @media (max-width: 768px) {
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+            }
+            header {
+                padding: 20px 15px;
+            }
+            .contact-info {
+                font-size: 1.1rem;
+                padding: 10px 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="contact">
-        WhatsApp/Telegram Номер: +7 926 229 24-39
+    <header>
+        <h1>Продажа очаровательных котят</h1>
+        <div class="contact-info">
+            WhatsApp/Telegram: <strong>+7 926 229 24-39</strong>
+        </div>
+    </header>
+
+    <div class="gallery" id="gallery">
+        <div class="loading">
+            <p>Загружаем информацию о котятах...</p>
+            <div style="margin-top:20px;font-size:40px;">😻</div>
+        </div>
     </div>
-    
-    <div class="gallery" id="gallery"></div>
+
+    <button class="debug-toggle" onclick="toggleDebug()">Показать отладочную информацию</button>
+    <div class="debug-info" id="debug"></div>
+
+    <footer>
+        <p>© 2023 Продажа породистых котят. Все права защищены</p>
+        <p>Сайт обновляется автоматически при добавлении новых фото</p>
+    </footer>
 
     <script>
+        // Конфигурация
+        const TOTAL_PHOTOS = 35;
+        const IMAGES_FOLDER = './images/';
+        const INFO_FILE = './info_cat.txt';
+        
         async function loadGallery() {
             try {
-                // Загрузка описаний
-                const response = await fetch('info_cat.txt');
+                // Показать состояние загрузки
+                document.getElementById('gallery').innerHTML = `
+                    <div class="loading">
+                        <p>Идёт загрузка информации о котятах...</p>
+                        <div style="margin-top:20px;font-size:40px;">😸</div>
+                    </div>
+                `;
+                
+                // Загрузка файла с описаниями
+                const response = await fetch(INFO_FILE + '?t=' + Date.now());
+                
+                if (!response.ok) {
+                    throw new Error(`Ошибка ${response.status}: Не удалось загрузить описания`);
+                }
+                
                 const text = await response.text();
                 
-                // Парсинг описаний
+                // Парсинг описаний с использованием регулярного выражения
                 const descriptions = {};
-                const blocks = text.split('photo ');
-                blocks.forEach(block => {
-                    const match = block.match(/^(\d+):\s*\*\s*([^*]+)\s*\*/);
-                    if (match && match[1] && match[2]) {
-                        descriptions[match[1]] = match[2].trim();
-                    }
-                });
+                const regex = /photo\s*(\d+)\s*:\s*\*\s*([^*]+)\s*\*/gi;
+                let match;
                 
-                // Генерация галереи
-                const gallery = document.getElementById('gallery');
-                for (let i = 1; i <= 35; i++) {
-                    const card = document.createElement('div');
-                    card.className = 'kitten-card';
-                    
-                    // Изображение
-                    const img = document.createElement('img');
-                    img.src = `images/photo${i}.jpg`;
-                    img.alt = `Котёнок ${i}`;
-                    img.onerror = function() {
-                        this.src = 'https://placekitten.com/250/200?image=' + i;
-                    };
-                    
-                    // Описание
-                    const desc = document.createElement('div');
-                    desc.className = 'description';
-                    desc.textContent = descriptions[i] || 'Описание отсутствует';
-                    
-                    card.appendChild(img);
-                    card.appendChild(desc);
-                    gallery.appendChild(card);
+                while ((match = regex.exec(text)) !== null) {
+                    const id = match[1].trim();
+                    const desc = match[2].trim();
+                    descriptions[id] = desc;
                 }
+                
+                // Создаем галерею
+                let galleryHTML = '';
+                
+                for (let i = 1; i <= TOTAL_PHOTOS; i++) {
+                    const desc = descriptions[i] || 'Описание отсутствует';
+                    
+                    galleryHTML += `
+                    <div class="kitten-card">
+                        <div class="image-container">
+                            <img 
+                                src="${IMAGES_FOLDER}photo${i}.jpg" 
+                                alt="Котёнок ${i}"
+                                onerror="handleImageError(this, ${i})"
+                            >
+                        </div>
+                        <div class="description">
+                            <span class="photo-id">ID: ${i}</span>
+                            <p class="kitten-desc">${desc}</p>
+                        </div>
+                    </div>
+                    `;
+                }
+                
+                document.getElementById('gallery').innerHTML = galleryHTML;
+                
+                // Обновить отладочную информацию
+                updateDebugInfo(`Успешно загружено: ${Object.keys(descriptions).length} описаний\n` +
+                               `Отображено: ${TOTAL_PHOTOS} карточек\n` +
+                               `Последнее обновление: ${new Date().toLocaleTimeString()}`);
+                
             } catch (error) {
-                console.error('Ошибка:', error);
-                document.getElementById('gallery').innerHTML = 
-                    '<p>Произошла ошибка при загрузке данных. Пожалуйста, обновите страницу.</p>';
+                console.error('Ошибка загрузки:', error);
+                document.getElementById('gallery').innerHTML = `
+                    <div class="error-placeholder">
+                        <h3>Произошла ошибка 😿</h3>
+                        <p>${error.message}</p>
+                        <p>Проверьте:</p>
+                        <ul style="text-align: left; margin-top: 10px;">
+                            <li>Файл описаний должен называться <code>info_cat.txt</code></li>
+                            <li>Фотографии должны быть в папке <code>images/</code></li>
+                            <li>Формат описаний: photo 1: *Текст*</li>
+                        </ul>
+                        <div style="margin-top:20px;font-size:40px;">🙀</div>
+                    </div>
+                `;
+                updateDebugInfo(`Ошибка: ${error.message}\n\nПопробуйте обновить страницу через несколько минут`);
             }
         }
         
-        // Запуск после загрузки страницы
+        function handleImageError(img, id) {
+            console.error(`Ошибка загрузки изображения: photo${id}.jpg`);
+            img.onerror = null;
+            img.src = `https://placekitten.com/300/250?image=${id}`;
+            img.alt = `Заглушка: Котёнок ${id}`;
+            img.style.opacity = '0.7';
+        }
+        
+        function updateDebugInfo(message) {
+            const debugDiv = document.getElementById('debug');
+            debugDiv.textContent = `Отладочная информация:\n${message}`;
+        }
+        
+        function toggleDebug() {
+            const debugDiv = document.getElementById('debug');
+            const btn = document.querySelector('.debug-toggle');
+            
+            if (debugDiv.style.display === 'block') {
+                debugDiv.style.display = 'none';
+                btn.textContent = 'Показать отладочную информацию';
+            } else {
+                debugDiv.style.display = 'block';
+                btn.textContent = 'Скрыть отладочную информацию';
+            }
+        }
+        
+        // Запуск при загрузке страницы
         window.addEventListener('DOMContentLoaded', loadGallery);
+        
+        // Обновлять каждые 5 минут на случай изменений
+        setInterval(loadGallery, 300000);
     </script>
 </body>
 </html>
